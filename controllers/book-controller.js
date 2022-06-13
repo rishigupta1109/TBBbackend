@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const book = require("../models/Book");
 const User = require("../models/User");
 const HttpError = require("../models/Http-error");
-const mongoose= require("mongoose");
+const mongoose = require("mongoose");
 
 const getAllBooks = async (req, res, next) => {
   let books;
@@ -53,10 +53,10 @@ const addNewBook = async (req, res, next) => {
   }
   let user;
   try {
-    user = await User.findOne({_id:req.body.userid});
+    user = await User.findOne({ _id: req.body.userid });
   } catch (err) {
     console.log(err);
-    return next(new HttpError("cant add", 500));
+    return next(new HttpError("user does not exists", 500));
   }
   if (!user) {
     return next(new HttpError("no user exist with this user id", 404));
@@ -77,13 +77,13 @@ const addNewBook = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     console.log(err);
-    return next(new HttpError("cant add", 500));
+    return next(new HttpError("Error while saving ,please try again", 500));
   }
-  res.status(201).json({ newBook:newBook.toObject({getters:true}) });
+  res.status(201).json({ newBook: newBook.toObject({ getters: true }) });
 };
 
 const updateBook = async (req, res, next) => {
-   const errors = validationResult(req);
+  const errors = validationResult(req);
   console.log(errors, errors.length);
   if (errors.length != undefined && errors.length !== 0) {
     console.log(errors);

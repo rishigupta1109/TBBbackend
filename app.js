@@ -4,12 +4,26 @@ const bodyParser = require("body-parser");
 
 const bookRoutes = require("./routes/book-routes");
 const userRoutes = require("./routes/user-routes");
+const HttpError = require("./models/Http-error");
+var cors = require("cors");
+
 
 app.use(bodyParser.json());
 
+app.use(cors());
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   // res.setHeader(
+//   //   "Access-Control-Allow-Headers",
+//   //   "Origin , X-Requested-With,Content-Type,Accept,Authorization"
+//   // );
+//   // res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
+// });
 app.use("/api/books", bookRoutes);
 app.use("/api/users", userRoutes);
-
+app.use((req, res, next) => {
+  return next(new HttpError("could not find this route", 404));
+});
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);

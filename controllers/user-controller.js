@@ -36,9 +36,10 @@ const login = async (req, res, next) => {
   } else if (users.password !== password) {
     return next(new HttpError("Wrong password", 422));
   }
-  res.json({ message: "Logged in!", users: users.toObject({ getters: true }) });
+  res.json({ message: "Logged in!", user: users.toObject({ getters: true }) });
 };
 const signup = async (req, res, next) => {
+  console.log("got req");
     const { firstName, lastName, email, password, college } = req.body;
   const errors = validationResult(req);
   console.log(errors, errors.length);
