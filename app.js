@@ -1,7 +1,9 @@
-const app = require("express")();
+const express=require('express');
+const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
+const fs=require("fs");
+const path=require("path");
 const bookRoutes = require("./routes/book-routes");
 const userRoutes = require("./routes/user-routes");
 const HttpError = require("./models/Http-error");
@@ -9,7 +11,7 @@ var cors = require("cors");
 
 
 app.use(bodyParser.json());
-
+app.use('/uploads/images',express.static(path.join('uploads','images')));
 app.use(cors());
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -25,6 +27,9 @@ app.use((req, res, next) => {
   return next(new HttpError("could not find this route", 404));
 });
 app.use((error, req, res, next) => {
+  if(req.file){
+    fs.unlink(req.file.path ,err=>console.log(err));
+  }
   if (res.headerSent) {
     return next(error);
   }

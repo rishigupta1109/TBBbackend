@@ -21,14 +21,16 @@ const getBookByUserId = async (req, res, next) => {
   const userid = req.params.userid;
   let books;
   try {
-    books = books = await book.find({ userid: userid });
+    books = await book.find({ userid: userid });
   } catch (err) {
     return next(new HttpError("internal error in db", 500));
   }
   if (!books || books.length === 0) {
     return next(new HttpError("No books available", 404));
   }
-  res.status(200).json({ books });
+  res
+    .status(200)
+    .json({ books: books.map((data) => data.toObject({ getters: true })) });
 };
 
 const getBookById = async (req, res, next) => {
@@ -42,7 +44,9 @@ const getBookById = async (req, res, next) => {
   if (!books || books.length === 0) {
     return next(new HttpError("No books available", 404));
   }
-  res.status(200).json({ books });
+  res
+    .status(200)
+    .json({ books: books.map((data) => data.toObject({ getters: true })) });
 };
 const addNewBook = async (req, res, next) => {
   const errors = validationResult(req);
@@ -61,12 +65,14 @@ const addNewBook = async (req, res, next) => {
   if (!user) {
     return next(new HttpError("no user exist with this user id", 404));
   }
+  console.log(req.file);
   const newBook = new book({
     name: req.body.name,
     price: req.body.price,
-    image: req.body.image,
+    image: req.file.path,
     subject: req.body.subject,
     userid: req.body.userid,
+    seller: req.body.seller,
   });
   try {
     let sess = await mongoose.startSession();
