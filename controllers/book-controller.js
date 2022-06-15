@@ -65,7 +65,11 @@ const addNewBook = async (req, res, next) => {
   if (!user) {
     return next(new HttpError("no user exist with this user id", 404));
   }
-  console.log(req.file);
+  console.log(req.userData.userId, req.body.userid);
+  if (req.userData.userId!==req.body.userid){
+    return next(new HttpError("Not authorized",401))
+  }
+   console.log(req.file);
   const newBook = new book({
     name: req.body.name,
     price: req.body.price,
@@ -102,6 +106,9 @@ const updateBook = async (req, res, next) => {
   } catch (err) {
     return next(new HttpError("cant update", 500));
   }
+  if (req.userData.userId !== Book.userid.toString()) {
+    return next(new HttpError("Not authorized", 401));
+  }
   Book.name = req.body.name;
   Book.price = req.body.price;
   Book.subject = req.body.subject;
@@ -121,7 +128,9 @@ const deleteBook = async (req, res, next) => {
   } catch (err) {
     return next(new HttpError("cant update", 500));
   }
-
+if (req.userData.userId !== Book.userid.id) {
+  return next(new HttpError("Not authorized", 401));
+}
   try {
     let sess = await mongoose.startSession();
     sess.startTransaction();

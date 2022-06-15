@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController=require("../controllers/user-controller");
+const checkAuth=require("../middlewares/check-auth");
 const {check}=require("express-validator");
 router.get('/',userController.getAllUser);
 router.post('/login',[check('email').normalizeEmail().isEmail(),check("password").isLength({min:5})],userController.login);
@@ -15,6 +16,7 @@ router.post(
   ],
   userController.signup
 );
+router.use(checkAuth);
 router.post(
   "/update",
   [
