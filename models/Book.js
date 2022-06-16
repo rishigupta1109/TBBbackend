@@ -6,6 +6,7 @@ const bookSchema = mongoose.Schema({
   image: { type: String, required: true },
   subject: { type: String, required: true },
   seller: { type: String, required: true },
+  college: { type: String, required: true },
   userid: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 

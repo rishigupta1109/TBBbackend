@@ -4,6 +4,7 @@ const userController=require("../controllers/user-controller");
 const checkAuth=require("../middlewares/check-auth");
 const {check}=require("express-validator");
 router.get('/',userController.getAllUser);
+router.get('/wishlist/:userid',userController.getWishlist);
 router.post('/login',[check('email').normalizeEmail().isEmail(),check("password").isLength({min:5})],userController.login);
 router.post(
   "/signup",
@@ -27,4 +28,10 @@ router.post(
   ],
   userController.updateUser
 );
+router.post("/wishlist",[
+  check("userid").not().isEmpty()
+],userController.addToWishlist)
+router.delete("/wishlist",[
+  check("userid").not().isEmpty()
+],userController.removeFromWishlist)
 module.exports = router;

@@ -95,6 +95,7 @@ const signup = async (req, res, next) => {
     college,
     password:hashedPassword,
     books: [],
+    wishlist:[]
   });
   try {
     await user.save();
@@ -140,7 +141,84 @@ const updateUser=async(req,res,next)=>{
   }
   res.json({ user: existingUser.toObject({ getters: true }) });
 }
+const addToWishlist=async(req,res,next)=>{
+     const {userid,book } = req.body;
+     const errors = validationResult(req);
+     console.log(errors, errors.length);
+     if (errors.length != undefined && errors.length !== 0) {
+       console.log(errors);
+       return next(new HttpError("invalid inputs", 422));
+     }
+     let existingUser;
+     try {
+       existingUser = await User.findOne({ _id: userid });
+       console.log(existingUser);
+       if (!existingUser) {
+         return next(new HttpError("User doesnt exists", 422));
+       }
+     } catch (err) {
+       return next(new HttpError("Something went wrong", 500));
+     }
+     if (!existingUser.wishlist.find((data)=>data.id===book.id)){
+       existingUser.wishlist = [...existingUser.wishlist, book];
+     }
+     else{
+      return next(new HttpError("book already present in wishlist",401))
+     }
+     try{
+      await existingUser.save();
+     }catch(err){
+      return next(new HttpError("Something went wrong", 500));
+     }
+     res.json({existingUser:existingUser.toObject({getters:true})});
+}
+const removeFromWishlist=async(req,res,next)=>{
+     const {userid,bookid } = req.body;
+     const errors = validationResult(req);
+     console.log(errors, errors.length);
+     if (errors.length != undefined && errors.length !== 0) {
+       console.log(errors);
+       return next(new HttpError("invalid inputs", 422));
+     }
+     let existingUser;
+     try {
+       existingUser = await User.findOne({ _id: userid });
+       console.log(existingUser);
+       if (!existingUser) {
+         return next(new HttpError("User doesnt exists", 422));
+       }
+     } catch (err) {
+       return next(new HttpError("Something went wrong", 500));
+     }
+     existingUser.wishlist=existingUser.wishlist.filter(
+       (data) => data.id !== bookid
+     );
+     try{
+      await existingUser.save();
+     }catch(err){
+      return next(new HttpError("Something went wrong", 500));
+     }
+     res.json({existingUser:existingUser.toObject({getters:true})});
+}
+const getWishlist=async(req,res,next)=>{
+   const userid = req.params.userid;
+  let user;
+  try {
+    user = await User.findOne({ _id: userid });
+  } catch (err) {
+    return next(new HttpError("internal error in db", 500));
+  }
+  if (!user  ) {
+    return next(new HttpError("User doesnt exists", 404));
+  }
+  res
+    .status(200)
+    .json({ wishlist: user.wishlist });
+}
 exports.getAllUser = getAllUser;
 exports.login = login;
 exports.signup = signup;
 exports.updateUser=updateUser;
+exports.addToWishlist=addToWishlist;
+exports.removeFromWishlist=removeFromWishlist;
+exports.getWishlist=getWishlist;

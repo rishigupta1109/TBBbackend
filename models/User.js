@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
   college: { type: String, required: true },
   password: { type: String, required: true },
   books: [{ type: mongoose.Types.ObjectId, required: true, ref: "Book" }],
+  wishlist:{type:Array,required:true}
 });
 userSchema.plugin(uniqValidator);
 module.exports = mongoose.model("User", userSchema);

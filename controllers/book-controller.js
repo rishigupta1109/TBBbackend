@@ -14,7 +14,7 @@ const getAllBooks = async (req, res, next) => {
   if (!books || books.length === 0) {
     return next(new HttpError("No books available", 404));
   }
-  res.status(200).json({ books });
+  res.status(200).json({ books:books.map((data)=>data.toObject({getters:true})) });
 };
 
 const getBookByUserId = async (req, res, next) => {
@@ -77,6 +77,7 @@ const addNewBook = async (req, res, next) => {
     subject: req.body.subject,
     userid: req.body.userid,
     seller: req.body.seller,
+    college:user.college
   });
   try {
     let sess = await mongoose.startSession();
