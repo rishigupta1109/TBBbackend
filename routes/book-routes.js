@@ -19,11 +19,22 @@ router.patch(
   bookController.updateBook
 );
 router.delete("/:bookid", bookController.deleteBook);
+// router.post(
+//   "/add",
+//   fileUpload.single('image'),
+//   [
+//     check("name").not().isEmpty(),
+//     check("price").isNumeric({ min: 1 }),
+//     check("subject").not().isEmpty(),
+//     check("userid").not().isEmpty(),
+//   ],
+//   bookController.addNewBook
+// );
 router.post(
   "/add",
-  fileUpload.single('image'),
   [
     check("name").not().isEmpty(),
+    check("image").not().isEmpty(),
     check("price").isNumeric({ min: 1 }),
     check("subject").not().isEmpty(),
     check("userid").not().isEmpty(),

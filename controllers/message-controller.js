@@ -19,14 +19,14 @@ const createRoom = async (req, res, next) => {
       user2: req.body.user2,
     });
     if (room) {
-      res.json({ room: room.toObject({ getters: true }) });
+     return res.json({ room: room.toObject({ getters: true }) });
     }
     room = await Room.findOne({
       user2: req.userData.userId,
       user1: req.body.user2,
     });
     if (room) {
-      res.json({ room: room.toObject({ getters: true }) });
+     return  res.json({ room: room.toObject({ getters: true }) });
     }
   } catch (err) {
     return next(

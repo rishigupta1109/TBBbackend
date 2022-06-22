@@ -59,6 +59,7 @@ const addNewBook = async (req, res, next) => {
     console.log(errors);
     return next(new HttpError("invalid inputs", 422));
   }
+  console.log(req.body);
   let user;
   try {
     user = await User.findOne({ _id: req.body.userid });
@@ -77,7 +78,7 @@ const addNewBook = async (req, res, next) => {
   const newBook = new book({
     name: req.body.name,
     price: req.body.price,
-    image: req.file.path,
+    image: req.body.image,
     subject: req.body.subject,
     userid: req.body.userid,
     seller: req.body.seller,
