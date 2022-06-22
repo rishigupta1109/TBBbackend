@@ -5,6 +5,7 @@ const bookController = require("../controllers/book-controller");
 const fileUpload=require("../middlewares/fileUpload");
 const checkAuth=require("../middlewares/check-auth")
 router.get("/", bookController.getAllBooks);
+router.get("/unique", bookController.getUniqueSubjectsnBooks);
 router.get("/:bookid", bookController.getBookById);
 router.get("/user/:userid", bookController.getBookByUserId);
 router.use(checkAuth);

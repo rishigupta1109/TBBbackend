@@ -17,6 +17,24 @@ const getAllUser = async (req, res, next) => {
   }
   res.json({ users: users.map((data) => data.toObject({ getters: true })) });
 };
+const getUniqueColleges=async(req,res,next)=>{
+  let users;
+  try {
+    users = await User.find();
+  } catch (err) {
+    return next(new HttpError("Cant get users", 500));
+  }
+  if (!users) {
+    return next(new HttpError("No users found", 404));
+  }
+  const uniqueColleges=new Set();
+  for(let user of users){
+    console.log(user.college);
+    uniqueColleges.add(user.college);
+  }
+  console.log(uniqueColleges);
+  res.json({uniqueColleges:Array.from(uniqueColleges)});
+}
 const login = async (req, res, next) => {
   const errors = validationResult(req);
   console.log(errors, errors.length);
@@ -222,3 +240,4 @@ exports.updateUser=updateUser;
 exports.addToWishlist=addToWishlist;
 exports.removeFromWishlist=removeFromWishlist;
 exports.getWishlist=getWishlist;
+exports.getUniqueColleges=getUniqueColleges;

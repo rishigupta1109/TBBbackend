@@ -5,6 +5,7 @@ const checkAuth=require("../middlewares/check-auth");
 const {check}=require("express-validator");
 router.get('/',userController.getAllUser);
 router.get('/wishlist/:userid',userController.getWishlist);
+router.get('/uniquecolleges',userController.getUniqueColleges);
 router.post('/login',[check('email').normalizeEmail().isEmail(),check("password").isLength({min:5})],userController.login);
 router.post(
   "/signup",

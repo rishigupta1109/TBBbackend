@@ -14,6 +14,7 @@ module.exports=(req,res,next)=>{
         console.log(req.userData);
         next()
     }catch(err){
+        console.log(err)
         return next(new HttpError("Authorization Failed",401))
     }
 }
