@@ -73,7 +73,7 @@ const login = async (req, res, next) => {
   delete user[password];
   let token;
   try {
-    token = jwt.sign({ userid: users.id }, "the_book_bajaar", {
+    token = jwt.sign({ userid: users.id }, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
   } catch (err) {
@@ -122,7 +122,7 @@ const signup = async (req, res, next) => {
   }
   let token;
   try{
-    token =jwt.sign({userid:user.id},"the_book_bajaar",{expiresIn:'1h'});
+    token =jwt.sign({userid:user.id},process.env.SECRET_KEY,{expiresIn:'1h'});
   }catch(err){
     return next(new HttpError("something went wrong,please try again",500));
   }

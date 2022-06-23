@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const Messages = require("../models/Message");
 const Room = require("../models/Room");
+const Notification = require("../models/Notification");
 const HttpError = require("../models/Http-error");
 const mongoose = require("mongoose");
 
@@ -19,14 +20,14 @@ const createRoom = async (req, res, next) => {
       user2: req.body.user2,
     });
     if (room) {
-     return res.json({ room: room.toObject({ getters: true }) });
+      return res.json({ room: room.toObject({ getters: true }) });
     }
     room = await Room.findOne({
       user2: req.userData.userId,
       user1: req.body.user2,
     });
     if (room) {
-     return  res.json({ room: room.toObject({ getters: true }) });
+      return res.json({ room: room.toObject({ getters: true }) });
     }
   } catch (err) {
     return next(
@@ -77,15 +78,22 @@ const getRooms = async (req, res, next) => {
     );
   }
   console.log(rooms);
-  let lastMessages=[];
+  let lastMessages = [];
   try {
-    for(let i=0;i<rooms.length;i++){
+    for (let i = 0; i < rooms.length; i++) {
       // findOne({}, {}, { sort: { created_at: -1 } }, function (err, post) {
       //   console.log(post);
       // });
-      let msg=await Messages.findOne({room:rooms[i].id},{},{sort:{date:-1},function(err,data){
-        // console.log(data);
-      }});
+      let msg = await Messages.findOne(
+        { room: rooms[i].id },
+        {},
+        {
+          sort: { date: -1 },
+          function(err, data) {
+            // console.log(data);
+          },
+        }
+      );
       lastMessages.push(msg);
     }
   } catch (err) {
@@ -93,7 +101,7 @@ const getRooms = async (req, res, next) => {
       new HttpError("something went wrong while searching room", 500)
     );
   }
-  res.json({ rooms: rooms,lastMessages });
+  res.json({ rooms: rooms, lastMessages });
 };
 const getRoomDetail = async (req, res, next) => {
   const errors = validationResult(req);
@@ -105,14 +113,14 @@ const getRoomDetail = async (req, res, next) => {
   let room = [];
   try {
     console.log(req.params.id);
-    room=await Room.findOne({id:req.params.id});
+    room = await Room.findOne({ id: req.params.id });
   } catch (err) {
     console.log(err);
     return next(
       new HttpError("something went wrong while searching room", 500)
     );
   }
-  res.json({room:room})
+  res.json({ room: room });
 };
 const getMessages = async (req, res, next) => {
   const errors = validationResult(req);
@@ -131,27 +139,80 @@ const getMessages = async (req, res, next) => {
       new HttpError("something went wrong while searching messages", 500)
     );
   }
-  res.json({messages});
+  res.json({ messages });
 };
-const saveMessage=async(msg)=>{
-  let message= new Messages({
-    room:msg.room,
-    message:msg.message,
-    to:msg.to,
-    from:msg.from,
-    date:msg.date
+const saveMessage = async (msg) => {
+  let message = new Messages({
+    room: msg.room,
+    message: msg.message,
+    to: msg.to,
+    from: msg.from,
+    date: msg.date,
   });
   console.log(message);
-  try{
-    let x=await message.save();
-  }
-  catch(err){
+  try {
+    let x = await message.save();
+  } catch (err) {
     console.log(err);
-  };
- 
+  }
+};
+const addNotification=async(userid,message)=>{
+  let user;
+  try{
+    user=await Notification.findOne({userid:userid});
+  }catch(err){console.log(err)}
+  if(user&&user.notification){
+    user.notification.push(message);
+    try {
+      await user.save();
+    } catch (error) {
+      console.log(error)
+    }
+    return user;
+  }
+  else{
+    user=new Notification({
+      userid:userid,
+      notification:[message]
+    });
+    try {
+      await user.save();
+    } catch (error) {
+      console.log(error)
+    }
+    return user;
+  }
+}
+const removeNotification=async(userid,roomid)=>{
+    let user;
+    try{
+      user=await Notification.findOne({userid:userid});
+    }catch(err){console.log(err)}
+    if(user){
+      console.log(user);
+      user.notification=user.notification.filter(a=>a.room!==roomid);
+      try{
+        await user.save();
+      }catch(err){
+        console.log(err)
+      }
+      return user;
+    }else{
+      return;
+    }
+}
+const getNotifications=async(userid)=>{
+  let user;
+  try{
+    user=await Notification.find({userid:userid});
+  }catch(err){console.log(err)}
+  return user;
 }
 exports.createRoom = createRoom;
 exports.getRooms = getRooms;
 exports.getRoomDetail = getRoomDetail;
-exports.saveMessage=saveMessage;
-exports.getMessages=getMessages;
+exports.saveMessage = saveMessage;
+exports.getMessages = getMessages;
+exports.addNotification = addNotification;
+exports.removeNotification = removeNotification;
+exports.getNotifications= getNotifications;

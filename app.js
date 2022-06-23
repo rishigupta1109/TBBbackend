@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PATCH", "DELETE"],
   },
 });
@@ -26,14 +26,24 @@ let socket_to_userid = {};
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
-  socket.on("join_room", (rooms, userid) => {
+  socket.on("join_room", async(rooms, userid) => {
+    let notification;
+    try{
+      notification=await messageController.getNotifications(userid);
+    }catch(err){
+      console.log(err);
+    }
+      io.to(socket.id).emit("notifications", notification);
+
     rooms_of_users[socket.id] = rooms;
     user_to_socketid[userid] = socket.id;
     socket_to_userid[socket.id] = userid;
+    
     for (let room of rooms) {
       socket.join(room.id);
       console.log("join req sent to ", room.id);
       socket.to(room.id).emit("room_joined", "karlia");
+
     }
   });
 
@@ -41,6 +51,7 @@ io.on("connection", (socket) => {
     console.log(message);
     try {
       await messageController.saveMessage(message);
+      await messageController.addNotification(message.to,message);
       console.log("sending msg");
       socket.to(message.room).emit("message_recieved", message);
     } catch (err) {
@@ -53,6 +64,18 @@ io.on("connection", (socket) => {
       io.to(socket.id).emit("online_status", true);
     } else {
       io.to(socket.id).emit("online_status", false);
+    }
+  });
+  socket.on("remove_notification",async(roomid,userid)=>{
+    let notification;
+    try {
+      notification=await messageController.removeNotification(userid, roomid);
+      if(notification){
+              io.to(socket.id).emit("notifications", notification);
+      }
+    } catch (err) {
+      console.log(err);
+      io.to(socket.id).emit("error_occured", err);
     }
   });
   socket.on("disconnect", () => {
@@ -100,10 +123,10 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://admin:admin123@cluster0.rzlym.mongodb.net/tbb?retryWrites=true&w=majority"
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.rzlym.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    server.listen(5000);
+    server.listen(process.env.PORT||5000);
     console.log("connected");
   })
   .catch((err) => {

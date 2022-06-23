@@ -8,7 +8,7 @@ module.exports=(req,res,next)=>{
         if(!token){
             throw new Error("Authorization Failed");
         }
-        const decodedToken = jwt.verify(token,"the_book_bajaar");
+        const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
         console.log(decodedToken);
         req.userData={userId:decodedToken.userid};
         console.log(req.userData);
