@@ -7,6 +7,16 @@ router.get('/',userController.getAllUser);
 router.get('/wishlist/:userid',userController.getWishlist);
 router.get('/uniquecolleges',userController.getUniqueColleges);
 router.post('/login',[check('email').normalizeEmail().isEmail(),check("password").isLength({min:5})],userController.login);
+router.post('/reset',[check('email').normalizeEmail().isEmail()],userController.generateOtp);
+router.post(
+  "/otpverify",
+  [
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 5 }),
+    check("otp").isLength({ min: 4,max:4 }),
+  ],
+  userController.checkOtp
+);
 router.post(
   "/signup",
   [
