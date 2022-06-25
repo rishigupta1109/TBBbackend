@@ -110,6 +110,7 @@ const updateBook = async (req, res, next) => {
   try {
     Book = await book.findById(bookid);
   } catch (err) {
+    console.log(err);
     return next(new HttpError("cant update", 500));
   }
   if (req.userData.userId !== Book.userid.toString()) {
@@ -128,10 +129,12 @@ const updateBook = async (req, res, next) => {
 
 const deleteBook = async (req, res, next) => {
   const bookid = req.params.bookid;
+  console.log(bookid)
   let Book;
   try {
     Book = await book.findById(bookid).populate("userid");
   } catch (err) {
+    console.log(err);
     return next(new HttpError("cant update", 500));
   }
   if (req.userData.userId !== Book.userid.id) {
