@@ -10,7 +10,7 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PATCH", "DELETE","OPTIONS"],
   },
 });
 
@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
 
 app.use(bodyParser.json());
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
-app.use(cors());
+// app.use(cors());
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
 //   // res.setHeader(
