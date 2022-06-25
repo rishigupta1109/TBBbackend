@@ -53,6 +53,7 @@ const getBookById = async (req, res, next) => {
     .json({ books: books.map((data) => data.toObject({ getters: true })) });
 };
 const addNewBook = async (req, res, next) => {
+  console.log("in add book")
   const errors = validationResult(req);
   console.log(errors, errors.length);
   if (errors.length != undefined && errors.length !== 0) {

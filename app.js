@@ -127,9 +127,9 @@ app.use((req, res, next) => {
   return next(new HttpError("could not find this route", 404));
 });
 app.use((error, req, res, next) => {
-  if (req.file) {
-    fs.unlink(req.file.path, (err) => console.log(err));
-  }
+  // if (req.file) {
+  //   fs.unlink(req.file.path, (err) => console.log(err));
+  // }
   if (res.headerSent) {
     return next(error);
   }
