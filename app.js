@@ -7,12 +7,7 @@ const path = require("path");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  },
-});
+const io = new Server(server);
 
 const bookRoutes = require("./routes/book-routes");
 const userRoutes = require("./routes/user-routes");
