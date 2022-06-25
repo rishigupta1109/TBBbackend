@@ -7,7 +7,14 @@ const path = require("path");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true,
+  },
+});
 
 const bookRoutes = require("./routes/book-routes");
 const userRoutes = require("./routes/user-routes");
@@ -97,15 +104,15 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 //   exposedHeaders: ["Content-Type"],
 // };
 // app.use(cors(corsOpts));
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin , X-Requested-With,Content-Type,Accept,Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin , X-Requested-With,Content-Type,Accept,Authorization"
+//   );
+//   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+//   next();
+// });
 app.use("/api/books", bookRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", messageRoutes);
