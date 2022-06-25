@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(bodyParser.json());
-app.use("/uploads/images", express.static(path.join("uploads", "images")));
+// app.use("/uploads/images", express.static(path.join("uploads", "images")));
 // const corsOpts = {
 //   origin: "*",
 //   credentials: true,
@@ -104,6 +104,7 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 //   exposedHeaders: ["Content-Type"],
 // };
 app.use(cors());
+app.options("*", cors());
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 //   res.setHeader(
