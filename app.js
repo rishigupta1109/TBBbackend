@@ -103,7 +103,7 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 //   allowedHeaders: ["Content-Type"],
 //   exposedHeaders: ["Content-Type"],
 // };
-// app.use(cors(corsOpts));
+app.use(cors());
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 //   res.setHeader(
