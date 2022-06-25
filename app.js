@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -106,7 +106,11 @@ app.use(bodyParser.json());
 // app.use(cors(corsOpts));
 // app.options("*", cors());
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", '*');
+  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+  res.setHeader(
+    "Access-Control-Allow-Credentials",
+    true
+  );
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin , X-Requested-With,Content-Type, Accept, Authorization"
