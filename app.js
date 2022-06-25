@@ -9,8 +9,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ["GET", "POST", "PATCH", "DELETE","OPTIONS"],
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   },
 });
 
@@ -94,22 +94,23 @@ io.on("connection", (socket) => {
 
 app.use(bodyParser.json());
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
-const corsOpts = {
-  origin: "*",
-  credentials: true,
-  methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type"],
-  exposedHeaders: ["Content-Type"],
-};
-app.use(cors(corsOpts));
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin , X-Requested-With,Content-Type,Accept,Authorization"
-//   );
-//   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
-// });
+// const corsOpts = {
+//   origin: "*",
+//   credentials: true,
+//   methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE"],
+//   allowedHeaders: ["Content-Type"],
+//   exposedHeaders: ["Content-Type"],
+// };
+// app.use(cors(corsOpts));
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin , X-Requested-With,Content-Type,Accept,Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+  next();
+});
 app.use("/api/books", bookRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", messageRoutes);
