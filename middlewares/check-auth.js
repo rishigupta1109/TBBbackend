@@ -1,7 +1,7 @@
 const jwt=require("jsonwebtoken");
 const HttpError = require("../models/Http-error");
 module.exports=(req,res,next)=>{
-    console.log("inn check auth")
+    console.log("inn check auth",req.method);
     if(req.method==="OPTIONS") return next();
     try{
         let token =req.headers.authorization.split(' ')[1];
