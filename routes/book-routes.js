@@ -8,6 +8,17 @@ router.get("/", bookController.getAllBooks);
 router.get("/unique", bookController.getUniqueSubjectsnBooks);
 router.get("/:bookid", bookController.getBookById);
 router.get("/user/:userid", bookController.getBookByUserId);
+router.post(
+  "/add",
+  [
+    check("name").not().isEmpty(),
+    check("image").not().isEmpty(),
+    check("price").isNumeric({ min: 1 }),
+    check("subject").not().isEmpty(),
+    check("userid").not().isEmpty(),
+  ],
+  bookController.addNewBook
+);
 router.use(checkAuth);
 router.patch(
   "/:bookid",
@@ -30,16 +41,5 @@ router.delete("/:bookid", bookController.deleteBook);
 //   ],
 //   bookController.addNewBook
 // );
-router.post(
-  "/add",
-  [
-    check("name").not().isEmpty(),
-    check("image").not().isEmpty(),
-    check("price").isNumeric({ min: 1 }),
-    check("subject").not().isEmpty(),
-    check("userid").not().isEmpty(),
-  ],
-  bookController.addNewBook
-);
 
 module.exports=router;
