@@ -20,14 +20,14 @@ const createRoom = async (req, res, next) => {
       user2: req.body.user2,
     });
     if (room) {
-      return res.json({ room: room.toObject({ getters: true }) });
+      return res.json({ room: room });
     }
     room = await Room.findOne({
       user2: req.userData.userId,
       user1: req.body.user2,
     });
     if (room) {
-      return res.json({ room: room.toObject({ getters: true }) });
+      return res.json({ room: room});
     }
   } catch (err) {
     return next(
@@ -47,7 +47,7 @@ const createRoom = async (req, res, next) => {
   } catch (err) {
     return next(new HttpError("something went wrong while creating room", 500));
   }
-  res.json({ room: room.toObject({ getters: true }) });
+  res.json({ room: room });
 };
 const getRooms = async (req, res, next) => {
   const errors = validationResult(req);
