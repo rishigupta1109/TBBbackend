@@ -8,6 +8,7 @@ router.get("/", bookController.getAllBooks);
 router.get("/unique", bookController.getUniqueSubjectsnBooks);
 router.get("/:bookid", bookController.getBookById);
 router.get("/user/:userid", bookController.getBookByUserId);
+router.use(checkAuth);
 router.post(
   "/add",
   [
@@ -19,7 +20,6 @@ router.post(
   ],
   bookController.addNewBook
 );
-router.use(checkAuth);
 router.patch(
   "/:bookid",
   [

@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin:'*',
     methods: ["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -103,23 +103,23 @@ app.use(bodyParser.json());
 //   allowedHeaders: ["Content-Type", "Authorization"],
 //   exposedHeaders: ["Content-Type", "Authorization"],
 // };
-// app.use(cors(corsOpts));
+app.use(cors());
 // app.options("*", cors());
-app.use((req, res, next) => {
-  console.log("setting headers");
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-  res.setHeader(
-    "Access-Control-Allow-Credentials",
-    true
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin , X-Requested-With,Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
-  console.log("headers seted");
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log("setting headers");
+//   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+//   res.setHeader(
+//     "Access-Control-Allow-Credentials",
+//     true
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin , X-Requested-With,Content-Type, Accept, Authorization"
+//   );
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+//   console.log("headers seted");
+//   next();
+// });
 app.use("/api/books", bookRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", messageRoutes);
