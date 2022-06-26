@@ -106,7 +106,7 @@ app.use(bodyParser.json());
 // app.use(cors(corsOpts));
 // app.options("*", cors());
 app.use((req, res, next) => {
-  console.log("setting headers")
+  console.log("setting headers");
   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
   res.setHeader(
     "Access-Control-Allow-Credentials",
