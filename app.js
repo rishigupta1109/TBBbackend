@@ -24,7 +24,27 @@ let user_to_socketid = {};
 let socket_to_userid = {};
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
+  socket.on("request_join",(userid,room)=>{
+    if(user_to_socketid[userid]){
+      io.to(user_to_socketid[userid]).emit("joining_req",room);
+    }
+  });
+  socket.on("join_room_id",async(userid,room)=>{
+     let notification;
+    try{
+      notification=await messageController.getNotifications(userid);
+    }catch(err){
+      console.log(err);
+    }
+      io.to(socket.id).emit("notifications", notification);
 
+    rooms_of_users[socket.id].push(room) 
+    user_to_socketid[userid] = socket.id;
+    socket_to_userid[socket.id] = userid;
+    
+    socket.join(room.id);
+    socket.to(room.id).emit("room_joined", "karlia");
+  })
   socket.on("join_room", async(rooms, userid) => {
     let notification;
     try{
@@ -39,8 +59,8 @@ io.on("connection", (socket) => {
     socket_to_userid[socket.id] = userid;
     
     for (let room of rooms) {
-      socket.join(room.id);
       console.log("join req sent to ", room.id);
+      socket.join(room.id);
       socket.to(room.id).emit("room_joined", "karlia");
 
     }
