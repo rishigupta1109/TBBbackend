@@ -120,6 +120,7 @@ const updateBook = async (req, res, next) => {
   Book.name = req.body.name;
   Book.price = req.body.price;
   Book.subject = req.body.subject;
+  Book.image=req.body.image;
   try {
     await Book.save();
   } catch (err) {
