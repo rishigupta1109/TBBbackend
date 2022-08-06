@@ -279,7 +279,7 @@ const generateOtp = async (req, res, next) => {
   }
   if (user) {
     let code = await Otp.findOne({ email: email });
-    let otp = Math.floor(Math.random() * 10000 + 1);
+    let otp = Math.floor(Math.random() * (9999 - 1000) + 1000);
     if (code) {
       code.expiresIn = new Date().getTime() + 300 * 1000;
       code.code = otp;
